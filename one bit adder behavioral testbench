@@ -1,9 +1,9 @@
-module tb_full_adder_behavioral;
+module tb_one_bit_adder_behavioral;
 
     reg a, b, cin;
     wire sum, cout;
 
-    full_adder_behavioral uut (
+    one_bit_adder_behavioral uut (
         .a(a),
         .b(b),
         .cin(cin),
