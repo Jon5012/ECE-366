@@ -1,4 +1,4 @@
-module one_bit_structural(S, Cout, A, B, Cin);
+module one_bit_adder_structural(S, Cout, A, B, Cin);
   input A, B, Cin;
   output S,  Cout;
   wire and_1_out, or_0_out, xor_1_out, and_0_out, xor_0_out;
