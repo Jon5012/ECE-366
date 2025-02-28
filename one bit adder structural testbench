@@ -1,9 +1,9 @@
-module one_bit_tb;
+module one_bit_adder_structural_tb;
 
     reg A, B, Cin;
     wire S, Cout;
 
-    one_bit DUT (
+    one_bit_adder_structural DUT (
         .S(S),
         .Cout(Cout),
         .A(A),
