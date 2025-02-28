@@ -1,68 +1,35 @@
-module tb_4_bit_ripple;
-
-    // Inputs
+module tb_four_bit_rca;
     reg a0, a1, a2, a3, b0, b1, b2, b3;
-
-    // Outputs
     wire S0, S1, S2, S3, Cout;
 
-    // Instantiate the 4-bit ripple carry adder
-    \4_bit_ripple uut (
-        .S0(S0),
-        .S1(S1),
-        .S2(S2),
-        .S3(S3),
+    four_bit_rca uut (
         .Cout(Cout),
-        .a0(a0),
-        .a1(a1),
-        .a2(a2),
-        .a3(a3),
-        .b0(b0),
-        .b1(b1),
-        .b2(b2),
-        .b3(b3)
+        .S3(S3), .S2(S2), .S1(S1), .S0(S0),
+        .a0(a0), .b0(b0), .b1(b1), .b2(b2),
+        .a2(a2), .b3(b3), .a3(a3), .a1(a1)
     );
 
-    // Test various input combinations
     initial begin
-        // Test case 1: 0000 + 0000
         a0 = 0; a1 = 0; a2 = 0; a3 = 0;
         b0 = 0; b1 = 0; b2 = 0; b3 = 0;
         #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
+        $display("TC1: A=0000, B=0000 | S=%b%b%b%b, Cout=%b", S3, S2, S1, S0, Cout);
 
-        // Test case 2: 0001 + 0001
-        a0 = 1; a1 = 0; a2 = 0; a3 = 0;
+        a0 = 1; a1 = 1; a2 = 0; a3 = 0;
+        b0 = 0; b1 = 1; b2 = 0; b3 = 1;
+        #10;
+        $display("TC2: A=0011, B=0101 | S=%b%b%b%b, Cout=%b", S3, S2, S1, S0, Cout);
+
+        a0 = 1; a1 = 1; a2 = 1; a3 = 1;
         b0 = 1; b1 = 0; b2 = 0; b3 = 0;
         #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
+        $display("TC3: A=1111, B=0001 | S=%b%b%b%b, Cout=%b", S3, S2, S1, S0, Cout);
 
-        // Test case 3: 0011 + 0011
-        a0 = 1; a1 = 1; a2 = 0; a3 = 0;
-        b0 = 1; b1 = 1; b2 = 0; b3 = 0;
-        #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
-
-        // Test case 4: 0111 + 0111
-        a0 = 1; a1 = 1; a2 = 1; a3 = 0;
-        b0 = 1; b1 = 1; b2 = 1; b3 = 0;
-        #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
-
-        // Test case 5: 1111 + 1111
-        a0 = 1; a1 = 1; a2 = 1; a3 = 1;
-        b0 = 1; b1 = 1; b2 = 1; b3 = 1;
-        #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
-
-        // Test case 6: 1010 + 0101
         a0 = 0; a1 = 1; a2 = 0; a3 = 1;
-        b0 = 1; b1 = 0; b2 = 1; b3 = 0;
+        b0 = 0; b1 = 1; b2 = 1; b3 = 0;
         #10;
-        $display("Input: A=%b%b%b%b, B=%b%b%b%b | Output: S=%b%b%b%b, Cout=%b", a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
+        $display("TC4: A=1010, B=0110 | S=%b%b%b%b, Cout=%b", S3, S2, S1, S0, Cout);
 
-        // End simulation
         $finish;
     end
-
 endmodule
