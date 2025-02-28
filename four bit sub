@@ -1,0 +1,32 @@
+module one_bit_adder(S, Cout, A, B, Cin);
+  output S,  Cout;
+  input A, B, Cin;
+  wire xor_1_out, and_1_out, or_0_out, and_0_out, xor_0_out;
+  assign xor_1_out = xor_0_out ^ Cin;
+  assign S = xor_1_out;
+  assign and_1_out = xor_0_out & Cin;
+  assign or_0_out = and_1_out | and_0_out;
+  assign Cout = or_0_out;
+  assign and_0_out = B & A;
+  assign xor_0_out = A ^ B;
+endmodule
+
+module four_bit_sub(Cout, S3, S2, S1, S0, a0, b0, b1, b2, a2, b3, a3, a1);
+  output Cout,  S3,  S2,  S1,  S0;
+  input a0, b0, b1, b2, a2, b3, a3, a1;
+  wire one_bit_adder_2_out_0, one_bit_adder_2_out_1, one_bit_adder_1_out_0, one_bit_adder_1_out_1, one_bit_adder_0_out_0, one_bit_adder_0_out_1, not_0_out, not_1_out, not_2_out, not_3_out, one_bit_adder_3_out_0, one_bit_adder_3_out_1, const_0;
+  one_bit_adder one_bit_adder_2(one_bit_adder_2_out_0, one_bit_adder_2_out_1, a1, not_2_out, one_bit_adder_3_out_1);
+  one_bit_adder one_bit_adder_1(one_bit_adder_1_out_0, one_bit_adder_1_out_1, a2, not_1_out, one_bit_adder_2_out_1);
+  one_bit_adder one_bit_adder_0(one_bit_adder_0_out_0, one_bit_adder_0_out_1, a3, not_0_out, one_bit_adder_1_out_1);
+  assign Cout = one_bit_adder_0_out_1;
+  assign S3 = one_bit_adder_0_out_0;
+  assign S2 = one_bit_adder_1_out_0;
+  assign S1 = one_bit_adder_2_out_0;
+  assign not_0_out = ~b3;
+  assign not_1_out = ~b2;
+  assign not_2_out = ~b1;
+  assign not_3_out = ~b0;
+  one_bit_adder one_bit_adder_3(one_bit_adder_3_out_0, one_bit_adder_3_out_1, a0, not_3_out, const_0);
+  assign S0 = one_bit_adder_3_out_0;
+  assign const_0 = 1'b1;
+endmodule
