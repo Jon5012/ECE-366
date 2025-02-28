@@ -1,9 +1,8 @@
-module one_bit_adder_structural_tb;
-
+module tb_one_bit_adder;
     reg A, B, Cin;
     wire S, Cout;
 
-    one_bit_adder_structural DUT (
+    one_bit_adder uut (
         .S(S),
         .Cout(Cout),
         .A(A),
@@ -14,37 +13,20 @@ module one_bit_adder_structural_tb;
     initial begin
         A = 0; B = 0; Cin = 0;
         #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
-
-        A = 0; B = 0; Cin = 1;
-        #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
-
-        A = 0; B = 1; Cin = 0;
-        #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
-
-        A = 0; B = 1; Cin = 1;
-        #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
+        $display("TC1: A=0, B=0, Cin=0 | S=%b, Cout=%b", S, Cout);
 
         A = 1; B = 0; Cin = 0;
         #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
-
-        A = 1; B = 0; Cin = 1;
-        #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
+        $display("TC2: A=1, B=0, Cin=0 | S=%b, Cout=%b", S, Cout);
 
         A = 1; B = 1; Cin = 0;
         #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
+        $display("TC3: A=1, B=1, Cin=0 | S=%b, Cout=%b", S, Cout);
 
         A = 1; B = 1; Cin = 1;
         #10;
-        $display("Input: A=%b, B=%b, Cin=%b | Output: S=%b, Cout=%b", A, B, Cin, S, Cout);
+        $display("TC4: A=1, B=1, Cin=1 | S=%b, Cout=%b", S, Cout);
 
         $finish;
     end
-
 endmodule
