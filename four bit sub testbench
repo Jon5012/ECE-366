@@ -1,0 +1,44 @@
+module tb_four_bit_sub;
+
+  reg a0, b0, b1, b2, a2, b3, a3, a1;
+  wire Cout, S3, S2, S1, S0;
+
+  four_bit_sub uut (
+    .Cout(Cout), 
+    .S3(S3), 
+    .S2(S2), 
+    .S1(S1), 
+    .S0(S0),
+    .a0(a0), .b0(b0), .b1(b1), .b2(b2), 
+    .a2(a2), .b3(b3), .a3(a3), .a1(a1)
+  );
+
+
+  initial begin
+    $monitor("a3 a2 a1 a0 = %b%b%b%b, b3 b2 b1 b0 = %b%b%b%b, S3 S2 S1 S0 = %b%b%b%b, Cout = %b", 
+             a3, a2, a1, a0, b3, b2, b1, b0, S3, S2, S1, S0, Cout);
+    
+    a0 = 1; a1 = 0; a2 = 0; a3 = 0; 
+    b0 = 1; b1 = 0; b2 = 0; b3 = 0; 
+    #10;  
+
+    a0 = 0; a1 = 0; a2 = 0; a3 = 1;  
+    b0 = 0; b1 = 0; b2 = 1; b3 = 0; 
+    #10;
+
+    a0 = 0; a1 = 0; a2 = 0; a3 = 1;
+    b0 = 1; b1 = 1; b2 = 1; b3 = 1; 
+    #10;
+
+    a0 = 0; a1 = 0; a2 = 0; a3 = 0; 
+    b0 = 0; b1 = 0; b2 = 0; b3 = 0; 
+    #10;
+
+    a0 = 0; a1 = 1; a2 = 0; a3 = 1;  
+    b0 = 0; b1 = 1; b2 = 1; b3 = 0;  
+    #10;
+
+    $finish;
+  end
+
+endmodule
