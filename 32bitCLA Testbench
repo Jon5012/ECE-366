@@ -1,0 +1,71 @@
+`timescale 1ns / 1ps
+
+module Prefix_Adder_16bit_tb;
+
+  reg [15:0] A;
+  reg [15:0] B;
+  reg Cin;
+  wire [15:0] Sum;
+  wire Cout;
+
+  Prefix_Adder_16bit uut (
+    .Sum(Sum), 
+    .Cout(Cout), 
+    .Cin(Cin), 
+    .A(A), 
+    .B(B)
+  );
+
+  initial begin
+    A = 16'h0000;
+    B = 16'h0000;
+    Cin = 1'b0;
+
+    A = 16'h1234;
+    B = 16'h5678;
+    Cin = 1'b0;
+    #10;
+    $display("Test Case 1: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'h1234;
+    B = 16'h5678;
+    Cin = 1'b1;
+    #10;
+    $display("Test Case 2: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'hFFFF;
+    B = 16'h0001;
+    Cin = 1'b0;
+    #10;
+    $display("Test Case 3: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'h0000;
+    B = 16'h0000;
+    Cin = 1'b0;
+    #10;
+    $display("Test Case 4: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'hABCD;
+    B = 16'h1234;
+    Cin = 1'b0;
+    #10;
+    $display("Test Case 5: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'h8000;
+    B = 16'h8000;
+    Cin = 1'b0;
+    #10;
+    $display("Test Case 6: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    A = 16'hFFFF;
+    B = 16'hFFFF;
+    Cin = 1'b1;
+    #10;
+    $display("Test Case 7: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+
+    $display("Tests complete.");
+    $finish;
+  end
+
+endmodule
+
