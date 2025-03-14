@@ -1,71 +1,53 @@
 `timescale 1ns / 1ps
 
-module Prefix_Adder_16bit_tb;
+module ThirtyTwoBitCLA_tb;
 
-  reg [15:0] A;
-  reg [15:0] B;
-  reg Cin;
-  wire [15:0] Sum;
-  wire Cout;
+  reg [31:0] a;
+  reg [31:0] b;
 
-  Prefix_Adder_16bit uut (
-    .Sum(Sum), 
-    .Cout(Cout), 
-    .Cin(Cin), 
-    .A(A), 
-    .B(B)
+  wire [31:0] sum;
+  wire carry_out;
+
+  ThirtyTwoBitCLA uut (
+    .sum(sum),
+    .carry_out(carry_out),
+    .a(a),
+    .b(b)
   );
 
   initial begin
-    A = 16'h0000;
-    B = 16'h0000;
-    Cin = 1'b0;
-
-    A = 16'h1234;
-    B = 16'h5678;
-    Cin = 1'b0;
+    a = 32'h0000_0000;
+    b = 32'h0000_0000;
     #10;
-    $display("Test Case 1: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 1: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'h1234;
-    B = 16'h5678;
-    Cin = 1'b1;
+    a = 32'hFFFF_FFFF;
+    b = 32'h0000_0001;
     #10;
-    $display("Test Case 2: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 2: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'hFFFF;
-    B = 16'h0001;
-    Cin = 1'b0;
+    a = 32'h1234_5678;
+    b = 32'h8765_4321;
     #10;
-    $display("Test Case 3: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 3: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'h0000;
-    B = 16'h0000;
-    Cin = 1'b0;
+    a = 32'hFFFF_FFFF;
+    b = 32'hFFFF_FFFF;
     #10;
-    $display("Test Case 4: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 4: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'hABCD;
-    B = 16'h1234;
-    Cin = 1'b0;
+    a = 32'hAAAA_AAAA;
+    b = 32'h5555_5555;
     #10;
-    $display("Test Case 5: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 5: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'h8000;
-    B = 16'h8000;
-    Cin = 1'b0;
+    a = 32'h0000_0000;
+    b = 32'h1234_5678;
     #10;
-    $display("Test Case 6: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
+    $display("Test Case 6: A = %h, B = %h, Sum = %h, Carry Out = %b", a, b, sum, carry_out);
 
-    A = 16'hFFFF;
-    B = 16'hFFFF;
-    Cin = 1'b1;
-    #10;
-    $display("Test Case 7: A = %h, B = %h, Cin = %b, Sum = %h, Cout = %b", A, B, Cin, Sum, Cout);
-
-    $display("Tests complete.");
+    $display("Simulation complete.");
     $finish;
   end
 
 endmodule
-
