@@ -1,0 +1,56 @@
+module Stage_1(P, G, A, B);
+  output P, G;
+  input A, B;
+  assign G = A & B;
+  assign P = A | B;
+endmodule
+
+module Stage_2(output P_prefix, G_prefix, input P1, P2, G1, G2);
+  assign G_prefix = G1 | (P1 & G2);
+  assign P_prefix = P1 & P2;
+endmodule
+
+module Stage_3(S, A, B, G);
+  output S;
+  input A, B, G;
+  wire xor_1_out, xor_0_out;
+  assign xor_0_out = A ^ B;
+  assign xor_1_out = xor_0_out ^ G;
+  assign S = xor_1_out;
+endmodule
+
+module Prefix_Adder_16bit (
+  output [15:0] Sum, 
+  output Cout,       
+  input Cin,         
+  input [15:0] A,    
+  input [15:0] B     
+);
+
+  wire [15:0] P, G;
+  wire [15:0] P_prefix, G_prefix;
+  wire [15:0] Carry_prefix;
+
+  generate
+    genvar i;
+    for (i = 0; i < 16; i = i + 1) begin : STAGE_1
+      Stage_1 stage1 (.P(P[i]), .G(G[i]), .A(A[i]), .B(B[i]));
+    end
+  endgenerate
+
+  assign Carry_prefix[0] = Cin;
+  generate
+    for (i = 1; i < 16; i = i + 1) begin : STAGE_2
+      Stage_2 stage2 (.P_prefix(P_prefix[i]), .G_prefix(G_prefix[i]), .P1(P[i-1]), .P2(P[i]), .G1(G[i-1]), .G2(G[i]));
+      assign Carry_prefix[i] = G_prefix[i] | (P_prefix[i] & Carry_prefix[i-1]);
+    end
+  endgenerate
+
+  generate
+    for (i = 0; i < 16; i = i + 1) begin : STAGE_3
+      Stage_3 stage3 (.S(Sum[i]), .A(A[i]), .B(B[i]), .G(Carry_prefix[i]));
+    end
+  endgenerate
+
+  assign Cout = Carry_prefix[15];
+endmodule
