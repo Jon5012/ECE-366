@@ -1,56 +1,115 @@
-module Stage_1(P, G, A, B);
-  output P, G;
-  input A, B;
-  assign G = A & B;
-  assign P = A | B;
-endmodule
-
-module Stage_2(output P_prefix, G_prefix, input P1, P2, G1, G2);
-  assign G_prefix = G1 | (P1 & G2);
-  assign P_prefix = P1 & P2;
-endmodule
-
-module Stage_3(S, A, B, G);
-  output S;
-  input A, B, G;
-  wire xor_1_out, xor_0_out;
-  assign xor_0_out = A ^ B;
-  assign xor_1_out = xor_0_out ^ G;
-  assign S = xor_1_out;
-endmodule
-
-module Prefix_Adder_16bit (
-  output [15:0] Sum, 
-  output Cout,       
-  input Cin,         
-  input [15:0] A,    
-  input [15:0] B     
+module FullAdder (
+  output S, Cout,
+  input A, B, Cin
 );
 
-  wire [15:0] P, G;
-  wire [15:0] P_prefix, G_prefix;
-  wire [15:0] Carry_prefix;
+  wire sum_intermediate, carry_intermediate;
 
-  generate
-    genvar i;
-    for (i = 0; i < 16; i = i + 1) begin : STAGE_1
-      Stage_1 stage1 (.P(P[i]), .G(G[i]), .A(A[i]), .B(B[i]));
-    end
-  endgenerate
+  assign sum_intermediate = A ^ B;
+  assign S = sum_intermediate ^ Cin;
 
-  assign Carry_prefix[0] = Cin;
-  generate
-    for (i = 1; i < 16; i = i + 1) begin : STAGE_2
-      Stage_2 stage2 (.P_prefix(P_prefix[i]), .G_prefix(G_prefix[i]), .P1(P[i-1]), .P2(P[i]), .G1(G[i-1]), .G2(G[i]));
-      assign Carry_prefix[i] = G_prefix[i] | (P_prefix[i] & Carry_prefix[i-1]);
-    end
-  endgenerate
+  assign carry_intermediate = A & B;
+  assign Cout = carry_intermediate | (Cin & sum_intermediate);
 
-  generate
-    for (i = 0; i < 16; i = i + 1) begin : STAGE_3
-      Stage_3 stage3 (.S(Sum[i]), .A(A[i]), .B(B[i]), .G(Carry_prefix[i]));
-    end
-  endgenerate
+endmodule
 
-  assign Cout = Carry_prefix[15];
+module FourBitRippleV2 (
+  output [3:0] sum,
+  output carry_out,
+  input [3:0] a,
+  input [3:0] b,
+  input carry_in
+);
+
+  wire [3:0] carry;
+  wire [3:0] s;
+
+  FullAdder fa0 (s[0], carry[0], a[0], b[0], carry_in);
+  FullAdder fa1 (s[1], carry[1], a[1], b[1], carry[0]);
+  FullAdder fa2 (s[2], carry[2], a[2], b[2], carry[1]);
+  FullAdder fa3 (s[3], carry[3], a[3], b[3], carry[2]);
+
+  assign sum = s;
+  assign carry_out = carry[3];
+
+endmodule
+
+module Propagate (
+  output P,
+  input [3:0] a,
+  input [3:0] b
+);
+
+  assign P = (a[0] | b[0]) & (a[1] | b[1]) & (a[2] | b[2]) & (a[3] | b[3]);
+
+endmodule
+
+module Generate (
+  output G,
+  input [3:0] a,
+  input [3:0] b
+);
+
+  assign G = (a[3] & b[3]) | ((a[3] | b[3]) & (a[2] & b[2])) |
+             ((a[3] | b[3]) & (a[2] | b[2]) & (a[1] & b[1])) |
+             ((a[3] | b[3]) & (a[2] | b[2]) & (a[1] | b[1]) & (a[0] & b[0]));
+
+endmodule
+
+module FourBitCLA (
+  output carry_out,
+  input [3:0] a,
+  input [3:0] b,
+  input carry_in
+);
+
+  wire G, P;
+  wire carry;
+
+  Generate gen (G, a, b);
+  Propagate prop (P, a, b);
+
+  assign carry = G | (P & carry_in);
+  assign carry_out = carry;
+
+endmodule
+
+module ThirtyTwoBitCLA (
+  output [31:0] sum,
+  output carry_out,
+  input [31:0] a,
+  input [31:0] b
+);
+
+  wire [7:0] carry;
+  wire [31:0] s;
+
+  assign carry[0] = 1'b0;
+
+  FourBitCLA cla0 (carry[1], a[3:0], b[3:0], carry[0]);
+  FourBitRippleV2 ripple0 (s[3:0], , a[3:0], b[3:0], carry[0]);
+
+  FourBitCLA cla1 (carry[2], a[7:4], b[7:4], carry[1]);
+  FourBitRippleV2 ripple1 (s[7:4], , a[7:4], b[7:4], carry[1]);
+
+  FourBitCLA cla2 (carry[3], a[11:8], b[11:8], carry[2]);
+  FourBitRippleV2 ripple2 (s[11:8], , a[11:8], b[11:8], carry[2]);
+
+  FourBitCLA cla3 (carry[4], a[15:12], b[15:12], carry[3]);
+  FourBitRippleV2 ripple3 (s[15:12], , a[15:12], b[15:12], carry[3]);
+
+  FourBitCLA cla4 (carry[5], a[19:16], b[19:16], carry[4]);
+  FourBitRippleV2 ripple4 (s[19:16], , a[19:16], b[19:16], carry[4]);
+
+  FourBitCLA cla5 (carry[6], a[23:20], b[23:20], carry[5]);
+  FourBitRippleV2 ripple5 (s[23:20], , a[23:20], b[23:20], carry[5]);
+
+  FourBitCLA cla6 (carry[7], a[27:24], b[27:24], carry[6]);
+  FourBitRippleV2 ripple6 (s[27:24], , a[27:24], b[27:24], carry[6]);
+
+  FourBitCLA cla7 (carry_out, a[31:28], b[31:28], carry[7]);
+  FourBitRippleV2 ripple7 (s[31:28], , a[31:28], b[31:28], carry[7]);
+
+  assign sum = s;
+
 endmodule
